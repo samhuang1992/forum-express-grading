@@ -56,7 +56,6 @@ const restaurantController = {
         return restaurant.increment('viewCounts')
       })
       .then(restaurant => {
-        console.log(restaurant)
         const isFavorited = restaurant.FavoritedUsers.some(fr => fr.id === req.user.id)
         const isLiked = restaurant.LikedUsers.some(lr => lr.id === req.user.id)
         res.render('restaurant', { restaurant: restaurant.toJSON(), isFavorited, isLiked })
