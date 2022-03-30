@@ -39,14 +39,28 @@ const userController = {
   },
   getUser: (req, res, next) => {
     return User.findByPk(req.params.id, {
-      include: { model: Comment, include: Restaurant }
+      include: [
+        { model: Comment, include: Restaurant },
+        { model: User, as: 'Followers' },
+        { model: User, as: 'Followings' },
+        { model: Restaurant, as: 'FavoritedRestaurants' }
+      ]
     })
       .then(user => {
         if (!user) throw new Error("User is didn't exist")
         // 用array.length來判斷留言次數
         const defaultCount = 0
         const commentCount = user.Comments?.length || defaultCount
-        res.render('users/profile', { user: user.toJSON(), commentCount })
+        const favoritedCount = user.FavoritedRestaurants?.length || defaultCount
+        const followerCount = user.Followers?.length || defaultCount
+        const followingCount = user.Followings?.length || defaultCount
+        res.render('users/profile', {
+          user: user.toJSON(),
+          commentCount,
+          favoritedCount,
+          followerCount,
+          followingCount
+        })
       })
       .catch(err => next(err))
   },
